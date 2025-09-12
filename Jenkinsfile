@@ -23,7 +23,7 @@ pipeline {
         stage('Docker Run') {
             steps {
                 // Run the Docker container in detached mode
-                bat 'docker run -d -p 8081:8080 simple-java-maven-app'
+                bat 'docker run simple-java-maven-app'
             }
         }
     }
