@@ -5,25 +5,39 @@ pipeline {
         maven "MAVEN"
     }
 
+    environment {
+        DOCKERHUB_CREDENTIALS = 'dockerhub-cred-id'
+        IMAGE_NAME = 'pavan203/simple-java-maven-app'
+        CONTAINER_NAME = 'simple-java-maven-app-container'
+    }
+
     stages {
         stage('Build') {
             steps {
-                // Build the Java project using Maven
-                bat 'mvn clean package'
+                bat 'mvn clean package -DskipTests'
             }
         }
 
         stage('Docker Build') {
             steps {
-                // Build the Docker image using CLI
-                bat 'docker build -t simple-java-maven-app .'
+                bat "docker build -t ${IMAGE_NAME}:${env.BUILD_NUMBER} ."
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
+                docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
+                    bat "docker push ${IMAGE_NAME}:${env.BUILD_NUMBER}"
+                    bat "docker tag ${IMAGE_NAME}:${env.BUILD_NUMBER} ${IMAGE_NAME}:latest"
+                    bat "docker push ${IMAGE_NAME}:latest"
+                }
             }
         }
 
         stage('Docker Run') {
             steps {
-                // Run the Docker container in detached mode
-                bat 'docker run simple-java-maven-app'
+                bat "docker rm -f ${CONTAINER_NAME} || echo Container not found"
+                bat "docker run -d --name ${CONTAINER_NAME} -p 8081:8080 ${IMAGE_NAME}:${env.BUILD_NUMBER}"
             }
         }
     }
