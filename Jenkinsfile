@@ -1,43 +1,29 @@
 pipeline {
     agent any
 
-    tools {
-        maven "MAVEN"
-    }
-
     environment {
-        DOCKERHUB_CREDENTIALS = 'dockerhub-cred-id'
-        IMAGE_NAME = 'pavan203/simple-java-maven-app'
-        CONTAINER_NAME = 'simple-java-maven-app-container'
+        IMAGE_NAME = "zangetsu203/simple-java-maven-app" // Replace with your Docker Hub repo
+        DOCKERHUB_CREDENTIALS = "docker"   // The Jenkins credential ID
     }
 
-   stages {
-        /*stage('Build') {
-            steps {
-                bat 'mvn clean package -DskipTests'
-            }
-        }*/
-
-        stage('Docker Build') {
+    stages {
+        stage('Build Docker Image') {
             steps {
                 bat "docker build -t ${IMAGE_NAME}:${env.BUILD_NUMBER} ."
             }
         }
-        
-        stage('Docker Push') {
+
+        stage('Push to Docker Hub') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
-                        docker.image('my-image').push()
+                    docker.withRegistry('', DOCKERHUB_CREDENTIALS) {
+                        // Push versioned tag
+                        bat "docker push ${IMAGE_NAME}:${env.BUILD_NUMBER}"
+                        // Push latest tag
+                        bat "docker tag ${IMAGE_NAME}:${env.BUILD_NUMBER} ${IMAGE_NAME}:latest"
+                        bat "docker push ${IMAGE_NAME}:latest"
                     }
                 }
-            }
-        }
-
-
-        stage('Docker Run') {
-            steps {
-                bat "docker rm -f ${CONTAINER_NAME} || echo Container not found"
             }
         }
     }
