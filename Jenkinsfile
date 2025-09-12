@@ -11,30 +11,29 @@ pipeline {
         CONTAINER_NAME = 'simple-java-maven-app-container'
     }
 
-    stages {
+   /* stages {
         stage('Build') {
             steps {
                 bat 'mvn clean package -DskipTests'
             }
-        }
+        }*/
 
         stage('Docker Build') {
             steps {
                 bat "docker build -t ${IMAGE_NAME}:${env.BUILD_NUMBER} ."
             }
         }
-
+        
         stage('Docker Push') {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
-                        def image = docker.build("${IMAGE_NAME}:${env.BUILD_NUMBER}")
-                        image.push()
-                        image.push('latest')
+                        docker.image('my-image').push()
                     }
                 }
             }
         }
+
 
         stage('Docker Run') {
             steps {
