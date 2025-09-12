@@ -13,15 +13,15 @@ pipeline {
             }
         }
 
-        stage('Push to Docker Hub') {
-            steps {
-                // Login, push versioned, tag latest, push latest
-                bat """
-                docker login -u ${DOCKER_USER_USR} --password-stdin
-                docker push ${IMAGE_NAME}:${env.BUILD_NUMBER}
-                docker logout
-                """
-            }
+    stage('Push Docker Image') {
+        steps {
+            bat """
+            docker login -u %DOCKER_USER_USR% -p %DOCKER_USER_PSW%
+            docker push %IMAGE_NAME%:%BUILD_NUMBER%
+            docker logout
+            """
         }
+    }
+
     }
 }
