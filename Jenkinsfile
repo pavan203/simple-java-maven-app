@@ -11,8 +11,8 @@ pipeline {
         CONTAINER_NAME = 'simple-java-maven-app-container'
     }
 
-   /* stages {
-        stage('Build') {
+   stages {
+        /*stage('Build') {
             steps {
                 bat 'mvn clean package -DskipTests'
             }
