@@ -2,23 +2,14 @@ pipeline {
     agent {
         docker {
             image 'your-docker-image-with-maven-and-git'
+            args '-u root:root' // optional: run as root to avoid permission issues
         }
     }
+
     stages {
-        stage('Checkout') {
-            steps {
-                sh 'git clone -b master https://github.com/pavan203/simple-java-maven-app.git'
-                sh 'cd simple-java-maven-app'
-            }
-        }
         stage('Build') {
             steps {
-                sh 'cd simple-java-maven-app && mvn clean install'
-            }
-        }
-        stage('Test') {
-            steps {
-                sh 'cd simple-java-maven-app && mvn test'
+                sh 'mvn clean install'
             }
         }
     }
