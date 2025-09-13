@@ -1,10 +1,20 @@
 pipeline {
-    agent { label 'docker' }  // Use the label of your Docker agent
+    agent none // We'll define agent per stage
+
     stages {
-        stage('Build') {
+        stage('Build on Windows') {
+            agent { 'built-in' } // Replace with your Windows node label
             steps {
-                //sh 'git --version'
+                bat 'mvn --version'
+            }
+        }
+
+        stage('Build on Docker Linux') {
+            agent { label 'docker' } // Your Docker slave label
+            steps {
+                sh 'git --version'
                 sh 'mvn --version'
+                sh 'java -version'
             }
         }
     }
