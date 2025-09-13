@@ -4,7 +4,7 @@ pipeline {
     stages {
        
         stage('Build') {
-             agent  'built-in'
+             agent {label 'built-in'}
             steps {
                 // Skip tests during build
                 bat 'mvn clean install -DskipTests'
