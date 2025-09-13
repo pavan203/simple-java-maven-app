@@ -1,24 +1,35 @@
 pipeline {
-    agent none  // no global agent; define per stage
+    agent none
 
     stages {
-       
+
         stage('Build') {
-            tools{maven 'MAVEN'}
-             agent {label 'built-in'}
+            agent { label 'built-in' }
+            tools { maven 'MAVEN' }
             steps {
-                // Skip tests during build
                 bat 'mvn clean install -DskipTests'
+                archiveArtifacts artifacts: 'target/my-app-1.0-SNAPSHOT.jar', fingerprint: true
             }
-                        steps {
+        }
+
+        stage('Test') {
+            agent { label 'built-in' }
+            tools { maven 'MAVEN' }
+            steps {
                 bat 'mvn test'
             }
         }
 
         stage('Run on Slave') {
-            agent { label 'docker' }  // your slave node label
+            agent { label 'docker' }
             steps {
-                sh 'java -jar target/my-app-1.0-SNAPSHOT.jar'
+                // Copy JAR from master to slave
+                copyArtifacts(
+                    projectName: env.JOB_NAME,
+                    selector: lastSuccessful(),
+                    filter: 'target/my-app-1.0-SNAPSHOT.jar'
+                )
+                sh 'java -jar my-app-1.0-SNAPSHOT.jar'
             }
         }
     }
