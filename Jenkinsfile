@@ -2,14 +2,13 @@ pipeline {
     agent { label 'docker-slave' }
 
     environment {
-        IMAGE_NAME = "zangetsu203/simple-java-maven-app:latest"
+        IMAGE_NAME = "zangetsu203/simple-java-maven-app"
     }
 
     stages {
-        stage('Run Docker Container') {
+        stage('Run Docker Image') {
             steps {
-                bat "docker pull ${IMAGE_NAME}"
-                bat "docker run -d --name my-app -p 8081:8080 ${IMAGE_NAME}"
+                bat "docker run --rm ${IMAGE_NAME}:latest"
             }
         }
     }
