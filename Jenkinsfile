@@ -1,14 +1,10 @@
 pipeline {
-    agent { label 'docker-slave' }
-
-    environment {
-        IMAGE_NAME = "zangetsu203/simple-java-maven-app"
-    }
-
+    agent { label 'docker' }  // Use the label of your Docker agent
     stages {
-        stage('Run Docker Image') {
+        stage('Build') {
             steps {
-                bat "docker run --rm ${IMAGE_NAME}:latest"
+                sh 'git --version'
+                sh 'mvn --version'
             }
         }
     }
