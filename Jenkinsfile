@@ -3,6 +3,7 @@ pipeline {
 
     stages {
         stage('Build & Test on Master') {
+            tools{maven "MAVEN"}
             agent { label 'built-in' }  // your Windows master
             steps {
                 bat 'mvn clean install'
