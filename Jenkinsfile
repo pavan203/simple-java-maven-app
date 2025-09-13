@@ -12,6 +12,8 @@ pipeline {
             }
         }
         stage('Test') {
+                        tools{maven 'MAVEN'}
+             agent {label 'built-in'}
             steps {
                 bat 'mvn test'
             }
