@@ -2,11 +2,15 @@ pipeline {
     agent none  // no global agent; define per stage
 
     stages {
-        stage('Build & Test on Master') {
-            tools{maven "MAVEN"}
-            agent { label 'built-in' }  // your Windows master
+        agent 'built-in'
+        stage('Build') {
             steps {
-                bat 'mvn clean install'
+                // Skip tests during build
+                bat 'mvn clean install -DskipTests'
+            }
+        }
+        stage('Test') {
+            steps {
                 bat 'mvn test'
             }
         }
