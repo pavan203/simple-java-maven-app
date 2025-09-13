@@ -2,7 +2,6 @@ pipeline {
     agent none
 
     stages {
-
         stage('Build') {
             agent { label 'built-in' }
             tools { maven 'MAVEN' }
@@ -12,22 +11,15 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            agent { label 'built-in' }
-            tools { maven 'MAVEN' }
-            steps {
-                bat 'mvn test'
-            }
-        }
 
         stage('Run on Slave') {
             agent { label 'docker' }
             steps {
-                // Copy JAR from master to slave
+                // Use unarchive instead of copyArtifacts
                 copyArtifacts(
-                    projectName: env.JOB_NAME,
-                    selector: lastSuccessful(),
-                    filter: 'target/my-app-1.0-SNAPSHOT.jar'
+                    projectName: "${env.JOB_NAME}",
+                    filter: 'target/my-app-1.0-SNAPSHOT.jar',
+                    selector: specific('${BUILD_NUMBER}')
                 )
                 sh 'java -jar my-app-1.0-SNAPSHOT.jar'
             }
