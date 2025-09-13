@@ -4,6 +4,7 @@ pipeline {
     stages {
        
         stage('Build') {
+            tools{maven 'MAVEN'}
              agent {label 'built-in'}
             steps {
                 // Skip tests during build
