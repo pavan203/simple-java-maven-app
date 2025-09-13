@@ -1,9 +1,19 @@
 pipeline {
-    agent {label 'docker'}
+    agent none  // no global agent; define per stage
+
     stages {
-        stage('Build') {
+        stage('Build & Test on Master') {
+            agent { label 'built-in' }  // your Windows master
             steps {
-                sh 'mvn clean install'
+                bat 'mvn clean install'
+                bat 'mvn test'
+            }
+        }
+
+        stage('Run on Slave') {
+            agent { label 'docker' }  // your slave node label
+            steps {
+                sh 'java -jar target/my-app-1.0-SNAPSHOT.jar'
             }
         }
     }
