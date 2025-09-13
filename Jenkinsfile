@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'docker-slave' }
+    agent { label 'docker-cloud' }
 
     environment {
         IMAGE_NAME = "zangetsu203/simple-java-maven-app:latest"
