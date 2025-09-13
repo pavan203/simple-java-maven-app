@@ -2,8 +2,9 @@ pipeline {
     agent none  // no global agent; define per stage
 
     stages {
-        agent 'built-in'
+       
         stage('Build') {
+             agent  'built-in'
             steps {
                 // Skip tests during build
                 bat 'mvn clean install -DskipTests'
