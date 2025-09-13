@@ -1,15 +1,15 @@
 pipeline {
-    agent none // We'll define agent per stage
-
+    agent any
+    tools{maven "MAVEN"}
     stages {
-
-
-        stage('Build on Docker Linux') {
-            agent { label 'docker' } // Your Docker slave label
+        stage('Build') {
             steps {
-                sh 'git --version'
-                sh 'mvn --version'
-                sh 'java -version'
+                bat 'mvn clean install'
+            }
+        }
+        stage('Test') {
+            steps {
+                bat 'mvn test'
             }
         }
     }
