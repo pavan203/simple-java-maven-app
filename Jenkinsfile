@@ -10,11 +10,7 @@ pipeline {
                 // Skip tests during build
                 bat 'mvn clean install -DskipTests'
             }
-        }
-        stage('Test') {
-                        tools{maven 'MAVEN'}
-             agent {label 'built-in'}
-            steps {
+                        steps {
                 bat 'mvn test'
             }
         }
