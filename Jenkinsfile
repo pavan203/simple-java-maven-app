@@ -1,27 +1,16 @@
 pipeline {
-    agent any
+    agent { label 'docker-slave' }
 
     environment {
-        IMAGE_NAME = "zangetsu203/simple-java-maven-app"
-        DOCKER_USER = credentials('docker') // Jenkins credential ID containing Docker username/password
+        IMAGE_NAME = "zangetsu203/simple-java-maven-app:latest"
     }
 
     stages {
-        stage('Build Docker Image') {
+        stage('Run Docker Container') {
             steps {
-                bat "docker build -t ${IMAGE_NAME}:${env.BUILD_NUMBER} ."
+                bat "docker pull ${IMAGE_NAME}"
+                bat "docker run -d --name my-app -p 8081:8080 ${IMAGE_NAME}"
             }
         }
-
-    stage('Push Docker Image') {
-        steps {
-            bat """
-            docker login -u %DOCKER_USER_USR% -p %DOCKER_USER_PSW%
-            docker push %IMAGE_NAME%:%BUILD_NUMBER%
-            docker logout
-            """
-        }
-    }
-
     }
 }
